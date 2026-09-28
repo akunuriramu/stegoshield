@@ -2,9 +2,16 @@
 
 ### Securely Hide. Safely Share.
 
+[![Production Deployment](https://img.shields.io/badge/Deployment-Live%20on%20Render-00f2fe?style=for-the-badge&logo=render)](https://stegoshield-bbl7.onrender.com)
+[![Status](https://img.shields.io/badge/Status-Operational%20%28200%20OK%29-10b981?style=for-the-badge)](https://stegoshield-bbl7.onrender.com/health)
+[![PWA Ready](https://img.shields.io/badge/PWA-Installable-3b82f6?style=for-the-badge)](https://stegoshield-bbl7.onrender.com)
+
+**Live Cloud URL:** [https://stegoshield-bbl7.onrender.com](https://stegoshield-bbl7.onrender.com)
+
 **StegoShield** is a production-grade, cybersecurity-focused web platform for image steganography and cryptographic message transport. It enables users to embed confidential text inside ordinary images using Least Significant Bit (LSB) steganography, layered with optional authenticated encryption (AES-256-GCM) and tamper-proof SHA-256 integrity verification.
 
 ---
+
 
 ## Architecture Diagram
 

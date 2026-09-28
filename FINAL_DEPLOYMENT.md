@@ -1,6 +1,10 @@
 # StegoShield Production Deployment Guide
 
+> **Live Verified Production URL:** [https://stegoshield-bbl7.onrender.com](https://stegoshield-bbl7.onrender.com)  
+> **Status:** Operational (200 OK) | Zero-Local-Dependency Cloud Deployment Verified
+
 This guide provides the authoritative instructions for deploying **StegoShield** to a public cloud server so that the web application runs continuously 24/7 without requiring your local PC.
+
 
 ---
 

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Hide Message | StegoShield{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+  
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 32px;">
+    <span class="badge badge-cyan">Encoder Workflow</span>
+    <h1 style="font-size: 2.3rem; margin-top: 8px;">Hide a Secret Message</h1>
+    <p style="color: var(--text-muted); font-size: 1rem; margin-top: 6px;">
+      Embed confidential text into pixel color channels using lossless LSB steganography.
+    </p>
+  </div>
+
+  <!-- Wizard Step Indicator -->
+  <div class="wizard-steps" aria-label="Step Progress">
+    <div class="wizard-step active" data-step="1">
+      <div class="wizard-step-circle">01</div>
+      <div class="wizard-step-label">Upload</div>
+    </div>
+    <div class="wizard-step" data-step="2">
+      <div class="wizard-step-circle">02</div>
+      <div class="wizard-step-label">Message</div>
+    </div>
+    <div class="wizard-step" data-step="3">
+      <div class="wizard-step-circle">03</div>
+      <div class="wizard-step-label">Security</div>
+    </div>
+    <div class="wizard-step" data-step="4">
+      <div class="wizard-step-circle">04</div>
+      <div class="wizard-step-label">Generate</div>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <form id="hide-form">
+    <!-- Step 1: Image Upload Card -->
+    <div class="card" style="margin-bottom: 24px;">
+      <h2 style="font-size: 1.15rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <span>📁</span> 1. Select Cover Image
+      </h2>
+
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg,image/bmp,image/webp" style="display: none;">
+        <div id="upload-placeholder">
+          <div class="dropzone-icon">🖼️</div>
+          <div class="dropzone-title">Drop your image here or click to browse</div>
+          <div class="dropzone-sub">Supports PNG, JPG, JPEG, BMP &amp; WEBP (Max 10 MB)</div>
+          <button type="button" class="btn btn-secondary btn-sm" id="browse-btn">Browse Files</button>
+        </div>
+      </div>
+
+      <!-- Image Preview Info -->
+      <div class="preview-container" id="preview-container" style="display: none;">
+        <img id="preview-image" src="" alt="Image preview" class="preview-thumb">
+        <div class="preview-info">
+          <div class="preview-title" id="preview-name">image.png</div>
+          <div class="preview-meta-chips">
+            <span class="badge badge-cyan" id="preview-dimensions">0 × 0 px</span>
+            <span class="badge badge-emerald" id="preview-size">0 KB</span>
+            <span class="badge badge-amber">Ready for LSB</span>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="remove-image-btn" style="color: var(--accent-rose);">
+            ✕ Remove Image
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Secret Message Card -->
+    <div class="card" style="margin-bottom: 24px;">
+      <h2 style="font-size: 1.15rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <span>✉️</span> 2. Secret Message
+      </h2>
+
+      <div class="form-group">
+        <div class="form-label">
+          <label for="message-input">Enter Confidential Text</label>
+          <span id="char-counter" style="font-size: 0.8rem; color: var(--text-dim); font-family: var(--font-mono);">0 / 50000</span>
+        </div>
+        <textarea id="message-input" class="form-control" placeholder="Write or paste your secret message here (supports multilingual text, emojis, multiline payloads)..." required></textarea>
+      </div>
+
+      <!-- Real-time Capacity Gauge -->
+      <div class="capacity-card">
+        <div class="capacity-header">
+          <span>Embedding Capacity Usage</span>
+          <span id="capacity-status" style="color: var(--text-dim);">Awaiting image upload</span>
+        </div>
+        <div class="capacity-progress-track">
+          <div class="capacity-progress-fill" id="capacity-progress"></div>
+        </div>
+        <div class="capacity-stats">
+          <div>
+            <span class="capacity-stat-label">Payload Size:</span>
+            <span class="capacity-stat-val" id="capacity-used">0 B</span>
+          </div>
+          <div>
+            <span class="capacity-stat-label">Usable Space:</span>
+            <span class="capacity-stat-val" id="capacity-available">0 B</span>
+          </div>
+          <div>
+            <span class="capacity-stat-label">Reserved Header:</span>
+            <span class="capacity-stat-val">48 Bytes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Security & Encryption Card -->
+    <div class="card" style="margin-bottom: 24px;">
+      <h2 style="font-size: 1.15rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <span>🛡️</span> 3. Cryptographic Protection
+      </h2>
+
+      <label class="toggle-wrapper" for="password-toggle">
+        <div class="toggle-info">
+          <span class="toggle-title">Enable Password Encryption (AES-256-GCM)</span>
+          <span class="toggle-subtitle">Message is encrypted before embedding into pixel bits</span>
+        </div>
+        <div class="switch">
+          <input type="checkbox" id="password-toggle">
+          <span class="slider"></span>
+        </div>
+      </label>
+
+      <!-- Password Fields (hidden until toggled) -->
+      <div id="password-fields" style="display: none; margin-top: 20px;">
+        <div class="form-group">
+          <label class="form-label" for="password-input">Decryption Password</label>
+          <input type="password" id="password-input" class="form-control" placeholder="Enter a strong password">
+          
+          <!-- Strength Meter -->
+          <div class="strength-meter">
+            <div class="strength-bar"></div>
+            <div class="strength-bar"></div>
+            <div class="strength-bar"></div>
+            <div class="strength-bar"></div>
+          </div>
+          <div class="strength-label" id="strength-label">Enter password to check strength</div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label class="form-label" for="confirm-password-input">Confirm Password</label>
+          <input type="password" id="confirm-password-input" class="form-control" placeholder="Confirm your password">
+        </div>
+
+        <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 10px;">
+          🔒 Derived via PBKDF2-HMAC-SHA256 (600,000 iterations). A 16-byte random salt and 12-byte IV are stored within the envelope. Passwords are never stored or transmitted in the clear.
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 4: Submission -->
+    <div style="margin-top: 28px;">
+      <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit-btn" disabled>
+        <span>🔐</span>
+        <span>Hide Message in Image</span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Animated Progress Container -->
+  <div class="progress-container" id="progress-container">
+    <div class="cyber-spinner"></div>
+    <h3 style="font-size: 1.25rem; color: var(--text-bright); margin-bottom: 6px;">Processing Steganography Pipeline</h3>
+    <div class="progress-stage" id="progress-stage">Initializing secure worker...</div>
+    <div style="font-size: 0.82rem; color: var(--text-dim); margin-top: 12px;">
+      Please do not close this window while the image is being generated.
+    </div>
+  </div>
+
+  <!-- Result Container -->
+  <div class="card" id="result-container" style="display: none; border-color: rgba(16, 185, 129, 0.4); margin-top: 24px;">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <span class="badge badge-emerald">✓ Generation Complete</span>
+      <h2 style="font-size: 1.8rem; margin-top: 8px;">Stego Image Successfully Created</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Your secret message has been securely embedded into the lossless PNG image.
+      </p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <img id="result-preview" src="" alt="Generated Stego Image" style="max-width: 100%; max-height: 380px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);">
+    </div>
+
+    <div class="capacity-stats" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px; padding: 16px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+      <div>
+        <span class="capacity-stat-label">Dimensions:</span>
+        <span class="capacity-stat-val" id="result-meta-dim">0 × 0 px</span>
+      </div>
+      <div>
+        <span class="capacity-stat-label">Payload Size:</span>
+        <span class="capacity-stat-val" id="result-meta-payload">0 B</span>
+      </div>
+      <div>
+        <span class="capacity-stat-label">Protection:</span>
+        <span class="capacity-stat-val" id="result-meta-security">Encrypted</span>
+      </div>
+      <div>
+        <span class="capacity-stat-label">Capacity Used:</span>
+        <span class="capacity-stat-val" id="result-meta-used">0.0%</span>
+      </div>
+    </div>
+
+    <!-- Lossless Warning Alert -->
+    <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 24px; font-size: 0.85rem; color: #fde68a;">
+      <strong>⚠️ Critical Requirement:</strong> Download and keep the generated PNG unchanged. Converting it to JPEG, uploading to services that compress images (like WhatsApp or social networks), or resizing it will destroy the hidden LSB bits.
+    </div>
+
+    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+      <a id="download-btn" href="#" class="btn btn-emerald btn-lg" style="flex: 1;" download="stego_shield_image.png">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>Download Stego PNG</span>
+      </a>
+      <button type="button" class="btn btn-secondary btn-lg" id="wipe-server-btn" title="Immediately delete this file from server memory for maximum privacy">
+        <span>🗑️ Shred Server Copy</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-lg" id="hide-another-btn">
+        <span>Hide Another Message</span>
+      </button>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hide.js') }}"></script>
+{% endblock %}

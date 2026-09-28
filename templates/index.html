@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}StegoShield | Securely Hide. Safely Share.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-tagline">
+    <span class="badge badge-cyan">
+      <span style="display:inline-block; width:6px; height:6px; background:var(--accent-cyan); border-radius:50%;"></span>
+      Next-Gen Steganography &amp; Encryption
+    </span>
+  </div>
+  <h1 class="hero-title">
+    Hide messages inside images.<br>
+    <span class="brand-accent">Without changing how they look.</span>
+  </h1>
+  <p class="hero-subtitle">
+    StegoShield uses Least Significant Bit (LSB) steganography to embed confidential text inside ordinary images.
+    Layered with optional AES-256-GCM authenticated encryption for verifiable security.
+  </p>
+  <div class="hero-actions">
+    <a href="{{ url_for('hide_page') }}" class="btn btn-primary btn-lg">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span>Hide a Message</span>
+    </a>
+    <a href="{{ url_for('extract_page') }}" class="btn btn-secondary btn-lg">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+      <span>Extract a Message</span>
+    </a>
+    <button type="button" class="btn btn-cyber btn-lg pwa-hero-install-btn" id="pwa-hero-install-btn" style="display: none;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      <span>Install PWA App</span>
+    </button>
+  </div>
+</section>
+
+<!-- Visual Pipeline Diagram -->
+<section class="pipeline-section" aria-label="Steganography Pipeline Illustration">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <h2 style="font-size: 1.25rem; color: var(--text-muted);">How Information Travels Through Pixels</h2>
+  </div>
+  <div class="pipeline-diagram">
+    <div class="pipeline-node">
+      <div class="pipeline-node-icon">🖼️</div>
+      <div class="pipeline-node-title">Original Image</div>
+      <div class="pipeline-node-desc">PNG, JPG, or BMP source</div>
+    </div>
+    
+    <div class="pipeline-arrow">➔</div>
+
+    <div class="pipeline-node">
+      <div class="pipeline-node-icon">✉️</div>
+      <div class="pipeline-node-title">Secret Message</div>
+      <div class="pipeline-node-desc">UTF-8 Unicode text &amp; emojis</div>
+    </div>
+
+    <div class="pipeline-arrow">➔</div>
+
+    <div class="pipeline-node">
+      <div class="pipeline-node-icon">🔐</div>
+      <div class="pipeline-node-title">Encrypted Payload</div>
+      <div class="pipeline-node-desc">AES-256-GCM + 48B Header</div>
+    </div>
+
+    <div class="pipeline-arrow">➔</div>
+
+    <div class="pipeline-node">
+      <div class="pipeline-node-icon">✨</div>
+      <div class="pipeline-node-title">Stego Image</div>
+      <div class="pipeline-node-desc">Visually identical lossless PNG</div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Grid -->
+<section style="margin-top: 60px;">
+  <div style="text-align: center; margin-bottom: 40px;">
+    <span class="badge badge-emerald">Engineered For Reliability</span>
+    <h2 style="font-size: 2rem; margin-top: 10px;">Cybersecurity-First Architecture</h2>
+  </div>
+
+  <div class="features-grid">
+    <div class="card card-glow">
+      <div class="feature-icon-box">🛡️</div>
+      <h3 class="feature-title">AES-256-GCM Authenticated Encryption</h3>
+      <p class="feature-desc">
+        Password protection uses PBKDF2-HMAC-SHA256 with 600,000 iterations to derive high-entropy keys, backed by AES-GCM for tamper-proof confidentiality.
+      </p>
+    </div>
+
+    <div class="card card-glow">
+      <div class="feature-icon-box">🎯</div>
+      <h3 class="feature-title">Binary Header Protocol</h3>
+      <p class="feature-desc">
+        A structured 48-byte header (<code style="color: var(--accent-cyan);">STGSHLD!</code>) prevents false positive decoding, carries length metadata, and validates payload bounds without crude delimiters.
+      </p>
+    </div>
+
+    <div class="card card-glow">
+      <div class="feature-icon-box">🔍</div>
+      <h3 class="feature-title">Cryptographic SHA-256 Integrity</h3>
+      <p class="feature-desc">
+        Every payload is fingerprinted with a SHA-256 checksum. If pixels are tampered with or corrupted, StegoShield detects and rejects the output immediately.
+      </p>
+    </div>
+
+    <div class="card card-glow">
+      <div class="feature-icon-box">⚡</div>
+      <h3 class="feature-title">Zero Visual Degradation</h3>
+      <p class="feature-desc">
+        Modifies only the least significant bit of RGB color channels (a change of at most 1/255th in intensity), making modifications undetectable to the human eye.
+      </p>
+    </div>
+
+    <div class="card card-glow">
+      <div class="feature-icon-box">🌐</div>
+      <h3 class="feature-title">Full Unicode &amp; Multilingual Support</h3>
+      <p class="feature-desc">
+        Embed complex multiline messages, emojis, Japanese, Telugu, Hindi, and technical payloads flawlessly using UTF-8 byte stream serialization.
+      </p>
+    </div>
+
+    <div class="card card-glow">
+      <div class="feature-icon-box">🔒</div>
+      <h3 class="feature-title">Ephemeral Zero-Knowledge Storage</h3>
+      <p class="feature-desc">
+        No persistent databases. Uploaded images and generated files are held in temporary storage and purged automatically. No passwords or messages are ever logged.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Call to action card -->
+<section class="card" style="text-align: center; padding: 48px 24px; margin-top: 30px; border-color: rgba(0, 242, 254, 0.25);">
+  <h2 style="font-size: 1.8rem; margin-bottom: 12px;">Ready to embed your first confidential message?</h2>
+  <p style="color: var(--text-muted); max-width: 550px; margin: 0 auto 28px;">
+    Start now with our interactive workflow. Upload any standard image, type your message, and download your secure stego PNG in seconds.
+  </p>
+  <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+    <a href="{{ url_for('hide_page') }}" class="btn btn-primary btn-lg">Launch Hide Wizard</a>
+    <a href="{{ url_for('how_it_works') }}" class="btn btn-secondary btn-lg">Explore How It Works</a>
+  </div>
+</section>
+{% endblock %}

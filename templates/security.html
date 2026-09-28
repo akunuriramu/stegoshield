@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Security Architecture | StegoShield{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 40px;">
+    <span class="badge badge-emerald">Threat Model &amp; Cryptography</span>
+    <h1 style="font-size: 2.5rem; margin-top: 8px;">Security Architecture</h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 8px;">
+      A transparent examination of our cryptographic primitives, threat boundaries, and operational guarantees.
+    </p>
+  </div>
+
+  <!-- Steganography vs Encryption -->
+  <div class="card" style="margin-bottom: 30px;">
+    <span class="badge badge-cyan">Defense in Depth</span>
+    <h2 style="font-size: 1.5rem; margin: 12px 0;">1. Steganography vs. Encryption</h2>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      Security professionals must distinguish between <em>secrecy of existence</em> and <em>confidentiality of content</em>:
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px;">
+        <h3 style="color: var(--accent-cyan); margin-bottom: 8px;">Steganography</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          <strong>Hides the existence</strong> of communication. An adversary observing traffic only sees an innocent image file.
+          However, steganography alone provides zero mathematical protection if the carrier algorithm is known.
+        </p>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px;">
+        <h3 style="color: var(--accent-emerald); margin-bottom: 8px;">Encryption</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          <strong>Protects the contents</strong> of the message. The existence of ciphertext is overt, but its contents cannot be deciphered without the cryptographic key.
+        </p>
+      </div>
+    </div>
+
+    <div style="background: rgba(0, 242, 254, 0.04); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: var(--radius-md); padding: 16px; font-size: 0.9rem;">
+      <strong>The StegoShield Synergy:</strong> Even if a state-level adversary or automated scanner detects the StegoShield binary header via steganalysis, they are confronted with an unbreakable <strong>AES-256-GCM</strong> ciphertext.
+    </div>
+  </div>
+
+  <!-- Cryptographic Primitives -->
+  <div class="card" style="margin-bottom: 30px;">
+    <span class="badge badge-emerald">Cryptographic Rigor</span>
+    <h2 style="font-size: 1.5rem; margin: 12px 0;">2. Cryptographic Specifications</h2>
+
+    <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px;">
+      <div style="padding: 16px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <h4 style="color: var(--text-bright); margin-bottom: 4px;">Key Derivation: PBKDF2-HMAC-SHA256</h4>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">
+          Conforms to OWASP recommendations with <strong>600,000 iterations</strong>.
+          Every encryption generates a unique, cryptographically random 16-byte (128-bit) salt using <code style="color: var(--accent-cyan);">os.urandom</code> to prevent rainbow table attacks.
+        </p>
+      </div>
+
+      <div style="padding: 16px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <h4 style="color: var(--text-bright); margin-bottom: 4px;">Authenticated Cipher: AES-256-GCM</h4>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">
+          Provides both confidentiality and message authenticity. A fresh 12-byte (96-bit) initialization vector (nonce) is generated per message.
+          The 128-bit authentication tag guarantees that bit-flipping attacks on the stego carrier cannot produce forged plaintext.
+        </p>
+      </div>
+
+      <div style="padding: 16px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <h4 style="color: var(--text-bright); margin-bottom: 4px;">Integrity Checksum: SHA-256</h4>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">
+          A 256-bit hash is stored within the binary header. Decoders verify the payload digest prior to parsing, catching accidental pixel damage or compression artifacts immediately.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transparent Security Limitations -->
+  <div class="card" style="border-color: rgba(244, 63, 94, 0.3);">
+    <span class="badge badge-rose">Honest Engineering</span>
+    <h2 style="font-size: 1.5rem; margin: 12px 0;">3. Limitations and Attack Surface</h2>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      StegoShield does not make misleading claims of being "unbreakable". Users must be mindful of real-world operational constraints:
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.9rem; color: var(--text-muted);">
+      <div style="border-left: 3px solid var(--accent-rose); padding-left: 14px;">
+        <strong style="color: var(--text-bright);">1. Vulnerability to Lossy Compression:</strong>
+        <p>If the stego image is uploaded to services that convert images to JPEG or apply lossy compression (such as WhatsApp, Discord, Twitter, or Instagram), all LSB bits will be scrambled and destroyed.</p>
+      </div>
+
+      <div style="border-left: 3px solid var(--accent-rose); padding-left: 14px;">
+        <strong style="color: var(--text-bright);">2. Spatial Transformations:</strong>
+        <p>Cropping, rotating, scaling, or resizing the stego PNG alters pixel alignments, making the binary sequence unrecoverable.</p>
+      </div>
+
+      <div style="border-left: 3px solid var(--accent-amber); padding-left: 14px;">
+        <strong style="color: var(--text-bright);">3. Statistical Steganalysis:</strong>
+        <p>If an image is heavily saturated with payload bits (over 50% capacity used), statistical tools (such as Chi-Square attacks or Sample Pair analysis) can detect non-natural LSB entropy distributions.</p>
+      </div>
+
+      <div style="border-left: 3px solid var(--accent-amber); padding-left: 14px;">
+        <strong style="color: var(--text-bright);">4. Password Entropy:</strong>
+        <p>AES-256 cannot compensate for trivial passwords (such as "123456" or "password"). Always use a high-entropy passphrase with at least 14+ characters.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

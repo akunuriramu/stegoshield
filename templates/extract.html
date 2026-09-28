@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Extract Message | StegoShield{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 32px;">
+    <span class="badge badge-cyan">Decoder Workflow</span>
+    <h1 style="font-size: 2.3rem; margin-top: 8px;">Extract a Hidden Message</h1>
+    <p style="color: var(--text-muted); font-size: 1rem; margin-top: 6px;">
+      Upload a StegoShield image to detect, verify, and decrypt its hidden message payload.
+    </p>
+  </div>
+
+  <!-- Upload Card -->
+  <div class="card" style="margin-bottom: 24px;">
+    <h2 style="font-size: 1.15rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <span>📥</span> 1. Select Stego Image
+    </h2>
+
+    <div class="dropzone" id="extract-dropzone">
+      <input type="file" id="extract-file-input" accept="image/png,image/bmp,image/jpeg,image/jpg,image/webp" style="display: none;">
+      <div id="extract-placeholder">
+        <div class="dropzone-icon">🔓</div>
+        <div class="dropzone-title">Drop your StegoShield PNG here or click to browse</div>
+        <div class="dropzone-sub">Upload the original lossless PNG image to extract secret data</div>
+        <button type="button" class="btn btn-secondary btn-sm" id="extract-browse-btn">Browse Files</button>
+      </div>
+    </div>
+
+    <!-- Preview Container -->
+    <div class="preview-container" id="extract-preview-container" style="display: none;">
+      <img id="extract-preview-image" src="" alt="Stego image preview" class="preview-thumb">
+      <div class="preview-info">
+        <div class="preview-title" id="extract-preview-name">stego_image.png</div>
+        <div class="preview-meta-chips">
+          <span class="badge badge-cyan" id="extract-preview-dimensions">0 × 0 px</span>
+          <span class="badge badge-emerald" id="extract-preview-size">0 KB</span>
+          <span class="badge badge-amber">Ready to Inspect</span>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="extract-remove-btn" style="color: var(--accent-rose);">
+          ✕ Remove Image
+        </button>
+      </div>
+    </div>
+
+    <!-- Extract Action Button -->
+    <div style="margin-top: 24px;">
+      <button type="button" class="btn btn-primary btn-lg btn-block" id="extract-submit-btn" disabled>
+        <span>🔓</span>
+        <span>Extract Message</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Extraction Progress Animation -->
+  <div class="progress-container" id="extract-progress-container">
+    <div class="cyber-spinner"></div>
+    <h3 style="font-size: 1.25rem; color: var(--text-bright); margin-bottom: 6px;">Analyzing Steganographic Channels</h3>
+    <div class="progress-stage" id="extract-progress-stage">Reading image bytes...</div>
+  </div>
+
+  <!-- Extracted Message Result Terminal -->
+  <div id="extract-result-container" style="display: none;">
+    <div class="terminal-card">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <div class="terminal-dot dot-red"></div>
+          <div class="terminal-dot dot-yellow"></div>
+          <div class="terminal-dot dot-green"></div>
+        </div>
+        <div class="terminal-title">STEGOSHIELD RECOVERED PAYLOAD // UTF-8 DECODED</div>
+        <div class="badge badge-emerald" style="font-size: 0.7rem;">✓ Verified Authentic</div>
+      </div>
+
+      <div class="terminal-body" id="terminal-message"></div>
+
+      <!-- Metadata Bar -->
+      <div style="padding: 14px 24px; background: rgba(255, 255, 255, 0.02); border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.82rem;">
+        <div>
+          <span style="color: var(--text-dim);">Security Mode:</span>
+          <strong id="meta-security" style="color: var(--accent-cyan); margin-left: 4px;">AES-256-GCM</strong>
+        </div>
+        <div>
+          <span style="color: var(--text-dim);">Payload Size:</span>
+          <strong id="meta-size" style="color: var(--text-bright); margin-left: 4px;">0 B</strong>
+        </div>
+        <div>
+          <span style="color: var(--text-dim);">SHA-256 Checksum:</span>
+          <code id="meta-checksum" style="color: var(--accent-emerald); margin-left: 4px;">--</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: 14px; margin-top: 20px; flex-wrap: wrap;">
+      <button type="button" class="btn btn-primary btn-lg" id="copy-message-btn" style="flex: 1;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span>Copy Message</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-lg" id="clear-message-btn">
+        <span>Clear Screen</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-lg" id="extract-another-btn">
+        <span>Extract Another</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Password Challenge Modal -->
+<div class="modal-overlay" id="password-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-dialog">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <div style="font-size: 2.2rem; margin-bottom: 8px;">🔐</div>
+      <h3 id="modal-title" style="font-size: 1.3rem;">Password-Protected Payload</h3>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 6px;">
+        This image contains an AES-256-GCM encrypted message. Enter the password to decrypt.
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="modal-password-input">Decryption Password</label>
+      <input type="password" id="modal-password-input" class="form-control" placeholder="Enter password" autofocus>
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-top: 24px;">
+      <button type="button" class="btn btn-primary" id="modal-submit-btn" style="flex: 1;">
+        <span>Decrypt &amp; Verify</span>
+      </button>
+      <button type="button" class="btn btn-secondary" id="modal-cancel-btn">
+        <span>Cancel</span>
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/extract.js') }}"></script>
+{% endblock %}

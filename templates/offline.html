@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Offline | StegoShield PWA{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 60px auto; text-align: center;">
+  <div style="font-size: 3.5rem; margin-bottom: 16px;">📡</div>
+  <span class="badge badge-amber">Connection Offline</span>
+  <h1 style="font-size: 2.2rem; margin: 16px 0 12px;">You are currently offline</h1>
+  <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 28px;">
+    StegoShield's cryptographic engine requires an active connection to process and verify image payloads.
+    You can still explore cached educational guides while disconnected.
+  </p>
+
+  <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 36px;">
+    <button type="button" class="btn btn-primary" onclick="window.location.reload();">
+      <span>🔄</span>
+      <span>Retry Connection</span>
+    </button>
+    <a href="{{ url_for('how_it_works') }}" class="btn btn-secondary">
+      <span>📖</span>
+      <span>Cached: How It Works</span>
+    </a>
+  </div>
+
+  <div class="card" style="text-align: left; font-size: 0.88rem; color: var(--text-dim);">
+    <strong style="color: var(--text-bright);">Did you know?</strong>
+    StegoShield is a Progressive Web App (PWA). Once your network is restored, all features will automatically reactivate without reloading.
+  </div>
+</div>
+{% endblock %}

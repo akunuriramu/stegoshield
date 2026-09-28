@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}How It Works | StegoShield Educational Guide{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 40px;">
+    <span class="badge badge-cyan">Technology Primer</span>
+    <h1 style="font-size: 2.5rem; margin-top: 8px;">How StegoShield Works</h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 8px;">
+      Understanding Least Significant Bit (LSB) steganography and cryptographic packaging.
+    </p>
+  </div>
+
+  <!-- Step 1: Pixel Anatomy -->
+  <div class="card" style="margin-bottom: 30px;">
+    <span class="badge badge-emerald">Fundamental Concept</span>
+    <h2 style="font-size: 1.5rem; margin: 12px 0;">1. Pixels and Color Channels</h2>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      A digital image is a 2D matrix of pixels. In standard 24-bit RGB images, each pixel consists of three color channels:
+      <strong>Red</strong>, <strong>Green</strong>, and <strong>Blue</strong>.
+    </p>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      Each channel is represented by an 8-bit unsigned integer ranging from <strong>0</strong> (darkest) to <strong>255</strong> (brightest).
+    </p>
+    
+    <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; font-family: var(--font-mono); font-size: 0.9rem;">
+      <div style="color: var(--accent-cyan); margin-bottom: 6px;">// Example Pixel (RGB)</div>
+      <div>Pixel(x=10, y=25):</div>
+      <div style="margin-left: 16px;">Red   = 255  ==>  <span style="color: #f87171;">11111111</span> (in binary)</div>
+      <div style="margin-left: 16px;">Green = 120  ==>  <span style="color: #4ade80;">01111000</span> (in binary)</div>
+      <div style="margin-left: 16px;">Blue  =  80  ==>  <span style="color: #60a5fa;">01010000</span> (in binary)</div>
+    </div>
+  </div>
+
+  <!-- Step 2: What is LSB? -->
+  <div class="card" style="margin-bottom: 30px;">
+    <span class="badge badge-cyan">The Core Mechanism</span>
+    <h2 style="font-size: 1.5rem; margin: 12px 0;">2. Least Significant Bit (LSB) Substitution</h2>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      The <strong>Least Significant Bit</strong> is the rightmost bit of an 8-bit byte. It carries a mathematical weight of exactly $2^0 = 1$.
+      Flipping this single bit alters the channel value by at most $\pm 1$ out of 255 (a deviation of less than <strong>0.39%</strong>).
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
+        <h4 style="color: var(--accent-cyan); margin-bottom: 8px;">Original Channel Byte (255)</h4>
+        <div style="font-family: var(--font-mono); font-size: 1.2rem; letter-spacing: 2px;">
+          1 1 1 1 1 1 1 <strong style="color: #ef4444;">1</strong>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-dim); margin-top: 6px;">
+          Value: 255 (100% Brightness)
+        </div>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px;">
+        <h4 style="color: var(--accent-emerald); margin-bottom: 8px;">Stego Channel Byte (254)</h4>
+        <div style="font-family: var(--font-mono); font-size: 1.2rem; letter-spacing: 2px;">
+          1 1 1 1 1 1 1 <strong style="color: var(--accent-emerald);">0</strong>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-dim); margin-top: 6px;">
+          Value: 254 (99.61% Brightness) — Imperceptible
+        </div>
+      </div>
+    </div>
+
+    <p style="color: var(--text-muted);">
+      Because the human eye cannot perceive a 0.39% variance in color intensity on an electronic display, the modified image appears 100% visually identical to the original.
+    </p>
+  </div>
+
+  <!-- Interactive Bit Playground -->
+  <div class="card" style="margin-bottom: 30px; border-color: rgba(0, 242, 254, 0.3);">
+    <span class="badge badge-amber">Interactive Demonstration</span>
+    <h2 style="font-size: 1.5rem; margin: 12px 0;">3. Live Bit-Embedding Simulator</h2>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      Type any character below to observe how its 8 UTF-8 bits are extracted and embedded sequentially into the Red, Green, and Blue LSBs of sample image pixels:
+    </p>
+
+    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
+      <label for="sample-char-input" style="font-weight: 600; font-size: 0.9rem;">Test Character:</label>
+      <input type="text" id="sample-char-input" value="S" maxlength="1" style="width: 60px; text-align: center; font-size: 1.4rem; font-weight: bold; padding: 6px; background: var(--bg-input); border: 1px solid var(--border-cyan); border-radius: var(--radius-sm); color: var(--text-bright);">
+      <span id="char-binary-display" style="font-family: var(--font-mono); font-size: 1.1rem; color: var(--accent-cyan); margin-left: 12px;">
+        ASCII 83 ==> 01010011
+      </span>
+    </div>
+
+    <div id="pixel-embed-simulation" style="background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; font-family: var(--font-mono); font-size: 0.85rem; overflow-x: auto;">
+      <!-- Populated dynamically via script -->
+    </div>
+  </div>
+
+  <!-- StegoShield Binary Architecture -->
+  <div class="card" style="margin-bottom: 30px;">
+    <span class="badge badge-cyan">Structured Protocol</span>
+    <h2 style="font-size: 1.5rem; margin: 12px 0;">4. Structured 48-Byte Binary Header</h2>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      Unlike naive steganography implementations that append fragile text delimiters (such as <code style="color:#ef4444;">###END###</code>), StegoShield embeds an exact binary header:
+    </p>
+
+    <div style="background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px; font-family: var(--font-mono); font-size: 0.82rem; overflow-x: auto; line-height: 1.8;">
+      <div style="color: var(--accent-cyan);">+-----------------------------------------------------------------------------------------+</div>
+      <div>| MAGIC (8B)  | VER (1B) | FLAGS (1B) | RES (2B) | LENGTH (4B uint32) | SHA-256 CHECKSUM (32B)    |</div>
+      <div>| "STGSHLD!"  | 0x01     | 0x01 (Enc) | 0x0000   | Big-Endian bytes   | Cryptographic Digest      |</div>
+      <div style="color: var(--accent-cyan);">+-----------------------------------------------------------------------------------------+</div>
+    </div>
+
+    <div style="margin-top: 16px; color: var(--text-muted); font-size: 0.9rem;">
+      <ul style="padding-left: 20px; line-height: 1.8;">
+        <li><strong>Magic Identifier (<code style="color:var(--accent-cyan);">STGSHLD!</code>):</strong> Prevents reading random noise from normal photos. If missing, extraction halts immediately.</li>
+        <li><strong>Flags:</strong> Signals whether AES-256-GCM decryption is mandatory before parsing.</li>
+        <li><strong>Payload Length:</strong> Instructs the decoder exactly how many bits to read, avoiding extraneous data extraction.</li>
+        <li><strong>SHA-256 Checksum:</strong> Verifies payload authenticity before decryption or presentation.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Why PNG is Mandatory -->
+  <div class="card" style="border-color: rgba(245, 158, 11, 0.3);">
+    <span class="badge badge-amber">Critical Technical Requirement</span>
+    <h2 style="font-size: 1.5rem; margin: 12px 0;">5. Why PNG Format is Strictly Required</h2>
+    <p style="color: var(--text-muted); margin-bottom: 14px;">
+      JPEG uses <strong>discrete cosine transform (DCT) lossy compression</strong>, rounding high-frequency spatial details to reduce file sizes.
+      Because LSB modifications reside in the lowest bit of pixel frequencies, JPEG compression destroys hidden data completely.
+    </p>
+    <p style="color: var(--text-muted);">
+      <strong>PNG (Portable Network Graphics)</strong> uses DEFLATE lossless compression, guaranteeing that every single pixel and every individual bit remains bit-exact upon saving and downloading.
+    </p>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const charInput = document.getElementById('sample-char-input');
+  const binaryDisplay = document.getElementById('char-binary-display');
+  const simContainer = document.getElementById('pixel-embed-simulation');
+
+  function updateSimulation() {
+    const char = charInput.value || 'S';
+    const code = char.charCodeAt(0);
+    const binary = code.toString(2).padStart(8, '0');
+    binaryDisplay.textContent = `ASCII ${code} ==> ${binary} (8 bits)`;
+
+    // Sample pixels:
+    // Pixel 1: R, G, B -> takes bits 0, 1, 2
+    // Pixel 2: R, G, B -> takes bits 3, 4, 5
+    // Pixel 3: R, G    -> takes bits 6, 7
+    const bits = binary.split('').map(Number);
+
+    const origPixels = [
+      { name: "Pixel 1", r: 200, g: 140, b: 90 },
+      { name: "Pixel 2", r: 185, g: 210, b: 75 },
+      { name: "Pixel 3", r: 95,  g: 130, b: 160 }
+    ];
+
+    let bitIdx = 0;
+    let html = `<div style="color: var(--accent-emerald); margin-bottom: 10px;">// Embedding Character '${char}' into RGB Color Channels:</div>`;
+
+    origPixels.forEach((p, pIdx) => {
+      html += `<div style="margin-bottom: 8px;"><strong>${p.name}:</strong><br>`;
+      
+      // R channel
+      if (bitIdx < 8) {
+        let bit = bits[bitIdx++];
+        let newR = (p.r & ~1) | bit;
+        html += `&nbsp;&nbsp;Red Channel:   ${p.r.toString().padStart(3, '0')} (${p.r.toString(2).padStart(8, '0')}) -> replace LSB with [${bit}] -> ${newR.toString().padStart(3, '0')} (${newR.toString(2).padStart(8, '0')})<br>`;
+      }
+      // G channel
+      if (bitIdx < 8) {
+        let bit = bits[bitIdx++];
+        let newG = (p.g & ~1) | bit;
+        html += `&nbsp;&nbsp;Green Channel: ${p.g.toString().padStart(3, '0')} (${p.g.toString(2).padStart(8, '0')}) -> replace LSB with [${bit}] -> ${newG.toString().padStart(3, '0')} (${newG.toString(2).padStart(8, '0')})<br>`;
+      }
+      // B channel
+      if (bitIdx < 8) {
+        let bit = bits[bitIdx++];
+        let newB = (p.b & ~1) | bit;
+        html += `&nbsp;&nbsp;Blue Channel:  ${p.b.toString().padStart(3, '0')} (${p.b.toString(2).padStart(8, '0')}) -> replace LSB with [${bit}] -> ${newB.toString().padStart(3, '0')} (${newB.toString(2).padStart(8, '0')})<br>`;
+      }
+      html += `</div>`;
+    });
+
+    simContainer.innerHTML = html;
+  }
+
+  charInput.addEventListener('input', updateSimulation);
+  updateSimulation();
+});
+</script>
+{% endblock %}

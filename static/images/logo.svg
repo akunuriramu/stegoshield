@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="shieldGrad" x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00f2fe" />
+      <stop offset="50%" stop-color="#4facfe" />
+      <stop offset="100%" stop-color="#0052d4" />
+    </linearGradient>
+    <linearGradient id="neonGlow" x1="12" y1="12" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#00c6ff" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer Shield Outline -->
+  <path d="M24 4L8 10V22C8 32.5 14.8 41.8 24 44C33.2 41.8 40 32.5 40 22V10L24 4Z" 
+        stroke="url(#shieldGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="#0d1527" fill-opacity="0.7"/>
+  <!-- Inner Circuit Grid Lines -->
+  <path d="M24 12V24M24 24L16 28M24 24L32 28M24 24V36" 
+        stroke="url(#neonGlow)" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Stego Pixel Grid Nodes -->
+  <circle cx="24" cy="12" r="2.5" fill="#00f2fe"/>
+  <circle cx="16" cy="28" r="2.2" fill="#4facfe"/>
+  <circle cx="32" cy="28" r="2.2" fill="#4facfe"/>
+  <circle cx="24" cy="24" r="3.2" fill="#00f2fe"/>
+  <circle cx="24" cy="36" r="2.5" fill="#0052d4"/>
+  <!-- Keyhole / Secure Core -->
+  <path d="M22 23A2 2 0 1 1 26 23L27 27H21L22 23Z" fill="#ffffff" fill-opacity="0.9"/>
+</svg>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{% block title %}StegoShield | Secure Image Steganography & Message Encryption{% endblock %}</title>
+  <meta name="description" content="StegoShield is a progressive web platform for secure image steganography and AES-256-GCM authenticated message encryption.">
+  
+  <!-- PWA & Mobile Web App Capabilities -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#07090e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="StegoShield">
+  
+  <!-- PWA Icons -->
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/icons/favicon-32.png') }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/icons/apple-touch-icon.png') }}">
+  
+  <!-- Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <!-- Ambient cyber grid background -->
+  <div class="cyber-grid-bg" aria-hidden="true"></div>
+
+  <!-- Offline Status Alert Banner -->
+  <div id="offline-banner" class="offline-banner" style="display: none;" role="alert">
+    <span>⚠️ You are currently working offline. Image processing features require internet connectivity.</span>
+  </div>
+
+  <!-- Main Navigation -->
+  <header class="navbar" role="banner">
+    <div class="container nav-container">
+      <a href="{{ url_for('index') }}" class="brand" aria-label="StegoShield Home">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="StegoShield Shield Logo" class="brand-icon">
+        <span>STEGO<span class="brand-accent">SHIELD</span></span>
+      </a>
+
+      <button class="mobile-toggle" aria-label="Toggle navigation menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+      <nav role="navigation">
+        <ul class="nav-links">
+          <li><a href="{{ url_for('index') }}" class="nav-link {% if active_page == 'home' %}active{% endif %}">Home</a></li>
+          <li><a href="{{ url_for('hide_page') }}" class="nav-link {% if active_page == 'hide' %}active{% endif %}">Hide Message</a></li>
+          <li><a href="{{ url_for('extract_page') }}" class="nav-link {% if active_page == 'extract' %}active{% endif %}">Extract Message</a></li>
+          <li><a href="{{ url_for('how_it_works') }}" class="nav-link {% if active_page == 'how-it-works' %}active{% endif %}">How It Works</a></li>
+          <li><a href="{{ url_for('security_page') }}" class="nav-link {% if active_page == 'security' %}active{% endif %}">Security</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-cta">
+        <!-- PWA Install Button (Appears on Supported Browsers & iOS) -->
+        <button type="button" class="btn btn-cyber btn-sm pwa-install-btn" id="pwa-install-btn" style="display: none;" aria-label="Install StegoShield App">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Install App</span>
+        </button>
+
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" aria-label="GitHub Repository">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="container" style="flex: 1; padding-top: 36px; padding-bottom: 60px;" role="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand" style="margin-bottom: 8px;">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="" class="brand-icon" style="width: 24px; height: 24px;">
+            <span>STEGO<span class="brand-accent">SHIELD</span></span>
+          </div>
+          <p style="color: var(--text-dim); font-size: 0.85rem;">Advanced image steganography and cryptographic privacy platform.</p>
+        </div>
+
+        <ul class="footer-links">
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="{{ url_for('hide_page') }}">Hide Message</a></li>
+          <li><a href="{{ url_for('extract_page') }}">Extract Message</a></li>
+          <li><a href="{{ url_for('how_it_works') }}">How It Works</a></li>
+          <li><a href="{{ url_for('security_page') }}">Security Architecture</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-privacy-box">
+        <strong>Privacy Assurance:</strong> Your images and messages are processed temporarily in volatile storage and are never permanently retained on our servers.
+      </div>
+
+      <div style="text-align: center; margin-top: 20px; font-size: 0.78rem; color: var(--text-dim);">
+        &copy; 2026 StegoShield Security Engineering. Built with Flask, Pillow &amp; AES-256-GCM.
+      </div>
+    </div>
+  </footer>
+
+  <!-- iOS Safari Add to Home Screen Instructions Modal -->
+  <div class="modal-overlay" id="ios-install-modal" role="dialog" aria-modal="true" aria-labelledby="ios-modal-title">
+    <div class="modal-dialog">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="{{ url_for('static', filename='images/icons/apple-touch-icon.png') }}" alt="" style="width: 56px; height: 56px; border-radius: 12px; margin-bottom: 12px; box-shadow: var(--glow-cyan);">
+        <h3 id="ios-modal-title" style="font-size: 1.25rem;">Install StegoShield on iOS</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 6px;">
+          Install this progressive web app on your iPhone or iPad for a full-screen, standalone experience:
+        </p>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; font-size: 0.9rem; line-height: 1.8; margin-bottom: 20px;">
+        <div>1. Tap the <strong>Share</strong> button <span style="color: var(--accent-cyan);">⎋</span> in Safari's bottom toolbar.</div>
+        <div>2. Scroll down and tap <strong>Add to Home Screen</strong> <span style="color: var(--accent-emerald);">⊞</span>.</div>
+        <div>3. Tap <strong>Add</strong> in the top-right corner.</div>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-block" id="ios-modal-close-btn">
+        <span>Got it!</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script>
+    // Register root-scoped Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' })
+          .then((reg) => {
+            console.log('[StegoShield PWA] ServiceWorker registered with scope:', reg.scope);
+          })
+          .catch((err) => {
+            console.warn('[StegoShield PWA] ServiceWorker registration failed:', err);
+          });
+      });
+    }
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
